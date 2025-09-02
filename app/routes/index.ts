@@ -1,5 +1,8 @@
+import { isAuth } from 'app/middlewares/isAuth';
 import { Handler } from 'express';
 
-export const get: Handler = async (req, res) => {
+const homeHandler: Handler = async (req, res) => {
 	res.send('Home Page');
 };
+
+export const get = [isAuth, homeHandler];

@@ -1,13 +1,10 @@
-import { InternalServerErrorError } from 'app/errors/customError';
-import isAuth from 'app/middlewares/isAuth';
-import { User } from 'app/models/user.model';
+import { InternalServerErrorError } from 'app/errors/explerror';
+import { isAuth } from 'app/middlewares/isAuth';
 import { Handler } from 'express';
 
 const getSelfHandler: Handler = async (req, res, next) => {
-	const authUser = req.user!;
-
 	try {
-		const user = await User.findById(authUser._id);
+		const user = req.user!;
 		res.status(200).json(user);
 	} catch (err) {
 		next(new InternalServerErrorError());

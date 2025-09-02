@@ -11,22 +11,21 @@ type Environment = {
 	CORS_ORIGIN: string[];
 };
 
-export const NODE_ENV = (process.env.NODE_ENV as Env) || 'development';
-export const DOMAIN = process.env.DOMAIN || 'localhost';
-export const PORT = parseInt(process.env.PORT || '8080');
-export const MONGO_URI =
-	process.env.MONGO_URI || 'mongodb://localhost:27017/basic';
-export const ACCESS_TOKEN_SECRET =
+const NODE_ENV: Env = (process.env.NODE_ENV as Env) || 'development';
+const DOMAIN = process.env.DOMAIN || 'localhost';
+const PORT = parseInt(process.env.PORT || '8080');
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/basic';
+const ACCESS_TOKEN_SECRET =
 	process.env.ACCESS_TOKEN_SECRET || 'supersecretpassword';
-export const REFRESH_TOKEN_SECRET =
+const REFRESH_TOKEN_SECRET =
 	process.env.REFRESH_TOKEN_SECRET || 'supersecretrefresh';
-export const REFRESH_TOKEN_SECURE =
+const REFRESH_TOKEN_SECURE =
 	(process.env.REFRESH_TOKEN_SECURE || 'false').toLowerCase() === 'true';
-export const CORS_ORIGIN = (
+const CORS_ORIGIN = (
 	process.env.CORS_ORIGIN || 'http://localhost:4200 http://localhost:3000'
 ).split(' ');
 
-const environment: Environment = {
+export const environment: Environment = {
 	NODE_ENV,
 	DOMAIN,
 	PORT,
@@ -37,4 +36,13 @@ const environment: Environment = {
 	CORS_ORIGIN,
 };
 
-export default environment;
+export {
+	ACCESS_TOKEN_SECRET,
+	CORS_ORIGIN,
+	DOMAIN,
+	MONGO_URI,
+	NODE_ENV,
+	PORT,
+	REFRESH_TOKEN_SECRET,
+	REFRESH_TOKEN_SECURE,
+};

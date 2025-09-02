@@ -5,21 +5,19 @@ import {
 import { Role } from 'app/models/user.model';
 import jwt from 'jsonwebtoken';
 
-export const generateAccessToken = (payload: {
+export interface TokenPayload {
 	id: string;
 	email: string;
 	roles: Role[];
-}) => {
+}
+
+export const generateAccessToken = (payload: TokenPayload) => {
 	return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
-		expiresIn: '3s',
+		expiresIn: '15m',
 	});
 };
 
-export const generateRefreshToken = (payload: {
-	id: string;
-	email: string;
-	roles: Role[];
-}) => {
+export const generateRefreshToken = (payload: TokenPayload) => {
 	return jwt.sign(payload, REFRESH_TOKEN_SECRET, {
 		expiresIn: '14d',
 	});
@@ -31,9 +29,7 @@ export const revokeRefreshToken = () => {
 	});
 };
 
-export const verifyRefreshToken = (
-	token: string,
-): { id: string; email: string; roles: Role[] } | null => {
+export const verifyRefreshToken = (token: string): TokenPayload | null => {
 	try {
 		const tokenUser = jwt.verify(token, REFRESH_TOKEN_SECRET) as {
 			id: string;

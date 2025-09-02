@@ -1,17 +1,21 @@
 import bcrypt from 'bcrypt';
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export const validRoles = ['admin', 'user'] as const;
 
 export type Role = (typeof validRoles)[number];
 
-interface IUser {
-	_id?: string;
+// Extend Document to include comparePassword
+export interface IUser extends Document {
+	_id: string;
 	email: string;
-	password: string;
+	password?: string;
 	resetPasswordToken: string;
 	resetPasswordTokenExpire: Date;
 	roles: Role[];
+	createdAt?: Date;
+	updatedAt?: Date;
+	comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 export const userSchema = new Schema<IUser>(
@@ -54,12 +58,12 @@ export const userSchema = new Schema<IUser>(
 	},
 );
 
-userSchema.pre('save', async function (done) {
-	if (this.isModified('password')) {
+userSchema.pre('save', function (done) {
+	if (this.isModified('password') && this.password) {
 		try {
 			const saltRounds = 10;
-			const salt = await bcrypt.genSalt(saltRounds);
-			this.password = await bcrypt.hash(this.password, salt);
+			const salt = bcrypt.genSaltSync(saltRounds);
+			this.password = bcrypt.hashSync(this.password, salt);
 		} catch (err: any) {
 			return done(err);
 		}
@@ -78,6 +82,13 @@ userSchema.path('roles').validate(function (roles: Role[]) {
 	}
 	return true;
 }, 'Invalid roles array.');
+
+// Compare given password with the hashed password
+userSchema.methods.comparePassword = async function (
+	candidatePassword: string,
+): Promise<boolean> {
+	return bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model<IUser>('User', userSchema);
 

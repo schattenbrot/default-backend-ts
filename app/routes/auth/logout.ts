@@ -8,5 +8,5 @@ export const get: Handler = async (_req, res) => {
 	});
 
 	// Respond with a success message
-	res.json({ message: 'Logout successful' });
+	res.status(204).end();
 };

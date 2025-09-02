@@ -1,4 +1,4 @@
-import { BadDataError } from 'app/errors/customError';
+import { BadDataError } from 'app/errors/explerror';
 import { User, validRoles } from 'app/models/user.model';
 import { Handler } from 'express';
 import { body, validationResult } from 'express-validator';
@@ -47,7 +47,7 @@ const emailInUseValidator: Handler = async (req, res, next) => {
 const registerHandler: Handler = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
+		return next(new BadDataError('Invalid request data'));
 	}
 	const { email, password, roles } = req.body;
 

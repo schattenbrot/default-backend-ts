@@ -1,10 +1,10 @@
 import { NODE_ENV } from 'app/config/environment';
 import { ErrorRequestHandler } from 'express';
-import { Explerror } from './customError';
+import { Explerror } from './explerror';
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (NODE_ENV !== 'production') {
-		console.log(err);
+		console.error(err);
 	}
 
 	if (err instanceof Explerror) {
@@ -12,6 +12,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 			errors: [{ msg: err.message }],
 		});
 	}
+
 	return res.status(500).json({
 		errors: [{ msg: 'Internal Server Error' }],
 	});

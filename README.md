@@ -10,3 +10,8 @@ This project uses typescript but technically JS is possible as well.
   - login
   - get self
   - logout
+
+## TODO
+
+- API logging
+- Linter

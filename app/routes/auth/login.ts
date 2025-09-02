@@ -1,38 +1,18 @@
 import { REFRESH_TOKEN_SECURE } from 'app/config/environment';
+import { InternalServerErrorError } from 'app/errors/explerror';
+import { passportLocal } from 'app/middlewares/isAuth';
 import {
-	InternalServerErrorError,
-	UnauthorizedError,
-} from 'app/errors/customError';
-import { User as UserModel } from 'app/models/user.model';
-import { generateAccessToken, generateRefreshToken } from 'app/utils/jwtTokens';
-import bcrypt from 'bcrypt';
+	generateAccessToken,
+	generateRefreshToken,
+	TokenPayload,
+} from 'app/utils/jwtTokens';
 import { Handler } from 'express';
-import { body, validationResult } from 'express-validator';
-
-export const loginValidator = [
-	body('email').isEmail().withMessage('Email must be valid'),
-	body('password').trim().notEmpty().withMessage('Password must be valid'),
-];
 
 const loginHandler: Handler = async (req, res, next) => {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return res.status(400).json({ errors: errors.array() });
-	}
-	const { email, password } = req.body;
-
 	try {
-		const user = await UserModel.findOne({ email });
-		if (!user) {
-			return next(new UnauthorizedError('Wrong email or password'));
-		}
+		const user = req.user!;
 
-		const passwordsMatch = await bcrypt.compare(password, user.password);
-		if (!passwordsMatch) {
-			return next(new UnauthorizedError('Wrong email or password'));
-		}
-
-		const tokenPayload = {
+		const tokenPayload: TokenPayload = {
 			id: user._id,
 			email: user.email,
 			roles: user.roles,
@@ -63,4 +43,4 @@ const loginHandler: Handler = async (req, res, next) => {
 	}
 };
 
-export const post = [loginValidator, loginHandler];
+export const post = [passportLocal, loginHandler];
