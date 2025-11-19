@@ -25,6 +25,21 @@ const CORS_ORIGIN = (
 	process.env.CORS_ORIGIN || 'http://localhost:4200 http://localhost:3000'
 ).split(' ');
 
+// Check for default values and warn developer
+const defaultValues = [];
+if (!process.env.ACCESS_TOKEN_SECRET) defaultValues.push('ACCESS_TOKEN_SECRET');
+if (!process.env.REFRESH_TOKEN_SECRET)
+	defaultValues.push('REFRESH_TOKEN_SECRET');
+if (!process.env.MONGO_URI) defaultValues.push('MONGO_URI');
+
+if (defaultValues.length > 0 && NODE_ENV === 'production') {
+	console.warn(
+		'⚠️  WARNING: The following environment variables are using default values in production:',
+		defaultValues.join(', '),
+	);
+	console.warn('Please set proper values for security reasons.');
+}
+
 export const environment: Environment = {
 	NODE_ENV,
 	DOMAIN,
