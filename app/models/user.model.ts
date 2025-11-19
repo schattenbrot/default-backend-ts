@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export const validRoles = ['admin', 'user'] as const;
 
@@ -7,7 +7,7 @@ export type Role = (typeof validRoles)[number];
 
 // Extend Document to include comparePassword
 export interface IUser extends Document {
-	_id: string;
+	_id: Types.ObjectId;
 	email: string;
 	password?: string;
 	resetPasswordToken: string;

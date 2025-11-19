@@ -13,7 +13,7 @@ const loginHandler: Handler = async (req, res, next) => {
 		const user = req.user!;
 
 		const tokenPayload: TokenPayload = {
-			id: user._id,
+			id: user._id.toHexString(),
 			email: user.email,
 			roles: user.roles,
 		};
@@ -21,11 +21,11 @@ const loginHandler: Handler = async (req, res, next) => {
 		const refreshToken = generateRefreshToken(tokenPayload);
 
 		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+			httpOnly: true,
 			secure: REFRESH_TOKEN_SECURE, // Use 'true' if you're serving over HTTPS
-			sameSite: REFRESH_TOKEN_SECURE ? 'strict' : 'lax', // Can also be 'Strict' or 'None', depending on your requirements
-			// domain: DOMAIN, // The domain for which the cookie is valid
-			path: '/', // The path for which the cookie is valid
+			sameSite: REFRESH_TOKEN_SECURE ? 'strict' : 'lax',
+			// domain: DOMAIN,
+			path: '/',
 		});
 
 		const accessToken = generateAccessToken(tokenPayload);
